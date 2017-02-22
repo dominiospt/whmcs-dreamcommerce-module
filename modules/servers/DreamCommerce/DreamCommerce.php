@@ -76,7 +76,7 @@ function DreamCommerce_ConfigOptions($prameters = array()) {
            "FriendlyName" => "Store Host Prefix",
             'Type'          =>  'text',
             'Size'          =>  '25',
-           'Description'   =>  'Used when domain is not ordered. Eg. "store" or {$order_number}',
+           'Description'   =>  'Used when domain is not ordered. Eg. "store" or {$order_number} or {$order_id}',
             "Default" => "store",
         ),
             'nextStoreID'          =>  array
@@ -190,7 +190,11 @@ function DreamCommerce_CreateAccount($params) {
                   $order = mysql_get_row("select * from `tblorders` where id =?", array($hosting->hosting_details['orderid']));
                   $dcConfig->hostPrefix = str_replace('{$order_number}', $order['ordernum'], $dcConfig->hostPrefix);
                   $host  = $params['domain'] ? $params['domain'] : $dcConfig->hostPrefix.$dcConfig->nextStoreID;
-            }else{
+            }elseif(trim($dcConfig->hostPrefix)=='{$order_id}'){
+                 $dcConfig->hostPrefix = str_replace('{$order_id}', $hosting->hosting_details['orderid'], $dcConfig->hostPrefix);
+                 $host  = $params['domain'] ? $params['domain'] : $dcConfig->hostPrefix.$dcConfig->nextStoreID;
+	    }
+	    else{
                  $host  = $params['domain'] ? $params['domain'] : $dcConfig->hostPrefix.$dcConfig->nextStoreID;
             }
 
